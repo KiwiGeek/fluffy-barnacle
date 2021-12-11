@@ -1,4 +1,7 @@
-﻿(long floor, ulong firstBasementStep) Day1()
+﻿using System.Text;
+using System.Security.Cryptography;
+
+(long floor, ulong firstBasementStep) Day1()
 {
     string input = File.ReadAllText("Assets\\day1.txt");
     long floor = 0;
@@ -74,7 +77,7 @@
             if (c == '<') { altOneLocation.x--; }
             if (c == '>') { altOneLocation.x++; }
         }
-        else 
+        else
         {
             if (c == '^') { altTwoLocation.y--; }
             if (c == 'v') { altTwoLocation.y++; }
@@ -92,6 +95,37 @@
 
 }
 
+(uint fiveChar, uint sixChar) Day4()
+{
+
+    string CreateMD5Hash(string input)
+    {
+        MD5 md5 = System.Security.Cryptography.MD5.Create();
+        byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+        byte[] hashBytes = md5.ComputeHash(inputBytes);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < hashBytes.Length; i++)
+        {
+            sb.Append(hashBytes[i].ToString("X2"));
+        }
+        return sb.ToString();
+    }
+
+    string secretKey = File.ReadAllText("Assets\\day4.txt");
+    uint fiveCharHash = 0;
+    uint sixCharHash = 0;
+    string hashed = string.Empty;
+
+    while (hashed.Length < 1 || hashed[..6] != "000000")
+    {
+        sixCharHash++;
+        string source = $"{secretKey}{sixCharHash}";
+        hashed = CreateMD5Hash(source);
+        if (fiveCharHash == 0 && hashed[..5] == "00000") { fiveCharHash = sixCharHash;}
+    }
+
+    return (fiveCharHash, sixCharHash);
+}
 
 (long floor, ulong firstBasement) = Day1();
 Console.WriteLine("Day 1");
@@ -105,3 +139,7 @@ Console.WriteLine($"  Part 2 - Feet of Ribbon: {feetOfRibbon}");
 Console.WriteLine("Day 3");
 Console.WriteLine($"  Part 1 - Houses Delivered To Year 1: {year1}");
 Console.WriteLine($"  Part 2 - Houses Delivered To Year 2: {year2}");
+(uint hash5, uint hash6) = Day4();
+Console.WriteLine("Day 4");
+Console.WriteLine($"  Part 1 - Lowest 5 Character hash: {hash5}");
+Console.WriteLine($"  Part 2 - Lowest 6 Character hash: {hash6}");
