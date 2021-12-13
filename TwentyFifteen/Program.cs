@@ -153,13 +153,13 @@ using System.Security.Cryptography;
     bool HasRepeatedPairOfCharacters(string s)
     {
         System.Text.RegularExpressions.Regex doubleCharacters = new("(\\w\\w).*\\1");
-        return doubleCharacters.Match(s).Success;    
+        return doubleCharacters.Match(s).Success;
     }
 
     bool HasRepeatedCharacterWithOneInbetween(string s)
     {
         System.Text.RegularExpressions.Regex doubleCharacters = new("(\\w).\\1");
-        return doubleCharacters.Match(s).Success;       
+        return doubleCharacters.Match(s).Success;
     }
 
     ulong niceStrings1 = 0;
@@ -169,12 +169,89 @@ using System.Security.Cryptography;
     foreach (string s in input)
     {
         if (HasAtLeastThreeVowels(s) && HasRepeatedLetters(s) && NoBadStrings(s)) { niceStrings1++; }
-        if (HasRepeatedPairOfCharacters(s) && HasRepeatedCharacterWithOneInbetween(s)) { niceStrings2++;}
+        if (HasRepeatedPairOfCharacters(s) && HasRepeatedCharacterWithOneInbetween(s)) { niceStrings2++; }
     }
 
     return (niceStrings1, niceStrings2);
 
 }
+
+(ulong lightsOn, ulong lightBrightness) Day6()
+{
+
+    bool[,] lights = new bool[1000, 1000];
+    uint[,] lightBrightness = new uint[1000, 1000];
+
+    void setBlock(uint x1, uint y1, uint x2, uint y2, string instruction)
+    {
+
+        void setRow(uint x1, uint x2, uint y, string instruction)
+        {
+
+            void setLight(uint x, uint y, string instruction)
+            {
+                if (instruction == "turn on") 
+                {
+                    lights[x, y] = true;
+                    lightBrightness[x,y]++;
+                }
+                if (instruction == "turn off") 
+                {
+                    lights[x, y] = false;
+                    if (lightBrightness[x,y]>0) {lightBrightness[x,y]--;}
+                }
+                if (instruction == "toggle") 
+                {
+                    lights[x, y] = !lights[x, y];
+                    lightBrightness[x,y] += 2;        
+                }      
+            }
+
+            for (uint i = x1; i <= x2; i++)
+            {
+                setLight(i, y, instruction);
+            }
+        }
+
+        for (uint i = y1; i <= y2; i++)
+        {
+            setRow(x1, x2, i, instruction);
+        }
+    }
+
+    List<string> input = File.ReadLines("./Assets/day6.txt").ToList<string>();
+
+    foreach (string s in input)
+    {
+        System.Text.RegularExpressions.Regex instructionDecoder = new("^(?<instr>(?:turn on)|(?:turn off)|(?:toggle)) (?<x1>\\d*),(?<y1>\\d*) through (?<x2>\\d*),(?<y2>\\d*)$");
+        System.Text.RegularExpressions.Match match = instructionDecoder.Match(s);
+
+        string instr = match.Groups["instr"].Value;
+        uint x1 = uint.Parse(match.Groups["x1"].Value);
+        uint x2 = uint.Parse(match.Groups["x2"].Value);
+        uint y1 = uint.Parse(match.Groups["y1"].Value);
+        uint y2 = uint.Parse(match.Groups["y2"].Value);
+
+        setBlock(x1, y1, x2, y2, instr);
+    }
+
+    // count lights on
+    ulong totallightsOn = 0;
+    ulong totalBrightness = 0;
+
+    for (int y=0; y <=999; y++)
+    {
+        for (int x = 0; x <= 999; x++) 
+        {
+            if (lights[x,y]) totallightsOn++;
+            totalBrightness += lightBrightness[x,y];
+        }
+    }
+
+    return (totallightsOn, totalBrightness);
+
+}
+
 #if !SKIP
 (long floor, ulong firstBasement) = Day1();
 Console.WriteLine("Day 1");
@@ -197,3 +274,7 @@ Console.WriteLine($"  Part 2 - Lowest 6 Character hash: {hash6}");
 Console.WriteLine("Day 5");
 Console.WriteLine($"  Part 1 - Number of nice strings (method 1): {niceStrings1}");
 Console.WriteLine($"  Part 2 - Number of nice strings (method 2): {niceStrings2}");
+(ulong lightsOn, ulong lightBrightness) = Day6();
+Console.WriteLine("Day 6");
+Console.WriteLine($"  Part 1 - Lights on: {lightsOn}");
+Console.WriteLine($"  Part 2 - Lights brightness: {lightBrightness}");
