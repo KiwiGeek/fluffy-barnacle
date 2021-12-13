@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using System.Security.Cryptography;
 
+#if !SKIP
 (long floor, ulong firstBasementStep) Day1()
 {
-    string input = File.ReadAllText("Assets\\day1.txt");
+    string input = File.ReadAllText("./Assets/day1.txt");
     long floor = 0;
     ulong firstBasementIndex = 0;
     ulong index = 0;
@@ -22,7 +23,7 @@ using System.Security.Cryptography;
 {
     ulong totalPaper = 0;
     ulong totalRibbon = 0;
-    List<string> input = File.ReadLines("Assets\\day2.txt").ToList<string>();
+    List<string> input = File.ReadLines("./Assets/day2.txt").ToList<string>();
 
     foreach (string s in input)
     {
@@ -52,7 +53,7 @@ using System.Security.Cryptography;
 (ulong year1, ulong year2) Day3()
 {
 
-    string input = File.ReadAllText("Assets\\day3.txt");
+    string input = File.ReadAllText("./Assets/day3.txt");
     Dictionary<(int x, int y), bool> visited = new();
     Dictionary<(int x, int y), bool> altVisited = new();
     bool altTurn = false;
@@ -111,7 +112,7 @@ using System.Security.Cryptography;
         return sb.ToString();
     }
 
-    string secretKey = File.ReadAllText("Assets\\day4.txt");
+    string secretKey = File.ReadAllText("./Assets/day4.txt");
     uint fiveCharHash = 0;
     uint sixCharHash = 0;
     string hashed = string.Empty;
@@ -121,12 +122,60 @@ using System.Security.Cryptography;
         sixCharHash++;
         string source = $"{secretKey}{sixCharHash}";
         hashed = CreateMD5Hash(source);
-        if (fiveCharHash == 0 && hashed[..5] == "00000") { fiveCharHash = sixCharHash;}
+        if (fiveCharHash == 0 && hashed[..5] == "00000") { fiveCharHash = sixCharHash; }
     }
 
     return (fiveCharHash, sixCharHash);
 }
+#endif
 
+(ulong niceStrings1, ulong niceStrings2) Day5()
+{
+
+    bool HasAtLeastThreeVowels(string s)
+    {
+        System.Text.RegularExpressions.Regex threeVowels = new("[aeiou].*[aeiou].*[aeiou]");
+        return threeVowels.Match(s).Success;
+    }
+
+    bool HasRepeatedLetters(string s)
+    {
+        System.Text.RegularExpressions.Regex doubleCharacters = new("(\\w)\\1{1}");
+        return doubleCharacters.Match(s).Success;
+    }
+
+    bool NoBadStrings(string s)
+    {
+        System.Text.RegularExpressions.Regex doubleCharacters = new("ab|cd|pq|xy");
+        return !doubleCharacters.Match(s).Success;
+    }
+
+    bool HasRepeatedPairOfCharacters(string s)
+    {
+        System.Text.RegularExpressions.Regex doubleCharacters = new("(\\w\\w).*\\1");
+        return doubleCharacters.Match(s).Success;    
+    }
+
+    bool HasRepeatedCharacterWithOneInbetween(string s)
+    {
+        System.Text.RegularExpressions.Regex doubleCharacters = new("(\\w).\\1");
+        return doubleCharacters.Match(s).Success;       
+    }
+
+    ulong niceStrings1 = 0;
+    ulong niceStrings2 = 0;
+    List<string> input = File.ReadLines("./Assets/day5.txt").ToList<string>();
+
+    foreach (string s in input)
+    {
+        if (HasAtLeastThreeVowels(s) && HasRepeatedLetters(s) && NoBadStrings(s)) { niceStrings1++; }
+        if (HasRepeatedPairOfCharacters(s) && HasRepeatedCharacterWithOneInbetween(s)) { niceStrings2++;}
+    }
+
+    return (niceStrings1, niceStrings2);
+
+}
+#if !SKIP
 (long floor, ulong firstBasement) = Day1();
 Console.WriteLine("Day 1");
 Console.WriteLine($"  Part 1 - Final Floor: {floor}");
@@ -143,3 +192,8 @@ Console.WriteLine($"  Part 2 - Houses Delivered To Year 2: {year2}");
 Console.WriteLine("Day 4");
 Console.WriteLine($"  Part 1 - Lowest 5 Character hash: {hash5}");
 Console.WriteLine($"  Part 2 - Lowest 6 Character hash: {hash6}");
+#endif
+(ulong niceStrings1, ulong niceStrings2) = Day5();
+Console.WriteLine("Day 5");
+Console.WriteLine($"  Part 1 - Number of nice strings (method 1): {niceStrings1}");
+Console.WriteLine($"  Part 2 - Number of nice strings (method 2): {niceStrings2}");
