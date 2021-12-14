@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using System.Security.Cryptography;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 #if !SKIP
 (long floor, ulong firstBasementStep) Day1()
@@ -127,7 +129,6 @@ using System.Security.Cryptography;
 
     return (fiveCharHash, sixCharHash);
 }
-#endif
 
 (ulong niceStrings1, ulong niceStrings2) Day5()
 {
@@ -190,21 +191,21 @@ using System.Security.Cryptography;
 
             void setLight(uint x, uint y, string instruction)
             {
-                if (instruction == "turn on") 
+                if (instruction == "turn on")
                 {
                     lights[x, y] = true;
-                    lightBrightness[x,y]++;
+                    lightBrightness[x, y]++;
                 }
-                if (instruction == "turn off") 
+                if (instruction == "turn off")
                 {
                     lights[x, y] = false;
-                    if (lightBrightness[x,y]>0) {lightBrightness[x,y]--;}
+                    if (lightBrightness[x, y] > 0) { lightBrightness[x, y]--; }
                 }
-                if (instruction == "toggle") 
+                if (instruction == "toggle")
                 {
                     lights[x, y] = !lights[x, y];
-                    lightBrightness[x,y] += 2;        
-                }      
+                    lightBrightness[x, y] += 2;
+                }
             }
 
             for (uint i = x1; i <= x2; i++)
@@ -239,17 +240,118 @@ using System.Security.Cryptography;
     ulong totallightsOn = 0;
     ulong totalBrightness = 0;
 
-    for (int y=0; y <=999; y++)
+    for (int y = 0; y <= 999; y++)
     {
-        for (int x = 0; x <= 999; x++) 
+        for (int x = 0; x <= 999; x++)
         {
-            if (lights[x,y]) totallightsOn++;
-            totalBrightness += lightBrightness[x,y];
+            if (lights[x, y]) totallightsOn++;
+            totalBrightness += lightBrightness[x, y];
         }
     }
 
     return (totallightsOn, totalBrightness);
 
+}
+
+#endif
+
+ushort Day7(string wireToReport, bool partTwo)
+{
+
+    List<string> input = File.ReadLines("./Assets/day7.txt").ToList<string>();
+
+    Dictionary<string, ushort> resolved = new();
+    List<string> unresolved = new();
+
+    foreach (string s in input) { unresolved.Add(s); }
+
+    if (partTwo) {
+        resolved.Add("b", 16076);
+        unresolved.Remove("19138 -> b");
+    }
+
+    do
+    {
+        foreach (string s in unresolved.ToList())
+        {
+            // parse the current instruction.
+            Regex instructionDecoder = new("^(?:(?<opr_1>.*?) *(?<instr>AND|OR|RSHIFT|NOT|LSHIFT) )?(?<opr_2>.*?) -> (?<dst>.*?)$");
+            Match m = instructionDecoder.Match(s);
+
+            // decode any potential operands
+            string opr1Name = m.Groups["opr_1"].Value;
+            ushort? opr1Value = null;
+            // if oppr1Name is a number, then it's a literal.
+            // if oppr1Name is a string, then it's a wire. If resolved doesn't contain that wire, then value should be null.
+            if (ushort.TryParse(opr1Name, out _)) 
+            {
+                // it's a literal.
+                opr1Value = ushort.Parse(opr1Name);
+            } 
+            else 
+            {
+                // it's a wire.
+                if (resolved.ContainsKey(opr1Name)) 
+                {
+                    opr1Value = resolved[opr1Name];
+                }
+            }
+
+            string opr2Name = m.Groups["opr_2"].Value;
+            ushort? opr2Value = null;
+            // if oppr1Name is a number, then it's a literal.
+            // if oppr1Name is a string, then it's a wire. If resolved doesn't contain that wire, then value should be null.
+            if (ushort.TryParse(opr2Name, out _)) 
+            {
+                // it's a literal.
+                opr2Value = ushort.Parse(opr2Name);
+            } 
+            else 
+            {
+                // it's a wire.
+                if (resolved.ContainsKey(opr2Name)) 
+                {
+                    opr2Value = resolved[opr2Name];
+                }
+            }
+
+            string dst = m.Groups["dst"].Value;
+            string instruction = m.Groups["instr"].Value;
+
+            switch (instruction) 
+            {
+                case "" when opr2Value.HasValue:
+                    // It's a literalToWire, or wireToWire
+                    resolved.Add(dst, opr2Value.Value);
+                    unresolved.Remove(s);
+                    break;
+                case "AND" when opr1Value.HasValue && opr2Value.HasValue:
+                    resolved.Add(dst, (ushort)(opr1Value.Value & opr2Value.Value));
+                    unresolved.Remove(s);
+                    break;       
+                case "OR" when opr1Value.HasValue && opr2Value.HasValue:
+                    resolved.Add(dst, (ushort)(opr1Value.Value | opr2Value.Value));
+                    unresolved.Remove(s);
+                    break;
+                case "LSHIFT" when opr1Value.HasValue && opr2Value.HasValue:
+                    resolved.Add(dst, (ushort)(opr1Value.Value << opr2Value.Value));
+                    unresolved.Remove(s);
+                    break;
+                case "RSHIFT" when opr1Value.HasValue && opr2Value.HasValue:
+                    resolved.Add(dst, (ushort)(opr1Value.Value >> opr2Value.Value));
+                    unresolved.Remove(s);
+                    break;
+                case "NOT" when opr2Value.HasValue:
+                    resolved.Add(dst, (ushort)(~opr2Value.Value));
+                    unresolved.Remove(s);
+                    break;
+            }
+
+        }
+
+    } while (unresolved.Count > 0);
+
+    return resolved[wireToReport];
 }
 
 #if !SKIP
@@ -269,7 +371,6 @@ Console.WriteLine($"  Part 2 - Houses Delivered To Year 2: {year2}");
 Console.WriteLine("Day 4");
 Console.WriteLine($"  Part 1 - Lowest 5 Character hash: {hash5}");
 Console.WriteLine($"  Part 2 - Lowest 6 Character hash: {hash6}");
-#endif
 (ulong niceStrings1, ulong niceStrings2) = Day5();
 Console.WriteLine("Day 5");
 Console.WriteLine($"  Part 1 - Number of nice strings (method 1): {niceStrings1}");
@@ -278,3 +379,8 @@ Console.WriteLine($"  Part 2 - Number of nice strings (method 2): {niceStrings2}
 Console.WriteLine("Day 6");
 Console.WriteLine($"  Part 1 - Lights on: {lightsOn}");
 Console.WriteLine($"  Part 2 - Lights brightness: {lightBrightness}");
+#endif
+(ushort wireSignal1, ushort wireSignal2) = (Day7("a", false), Day7("a", true));
+Console.WriteLine("Day 7");
+Console.WriteLine($"  Part 1 - Signal on wire \"a\": {wireSignal1}");
+Console.WriteLine($"  Part 2 - Signal on wire \"a\" after overriding \"b\" with {wireSignal1}: {wireSignal2}");
