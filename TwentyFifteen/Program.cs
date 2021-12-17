@@ -265,7 +265,8 @@ ushort Day7(string wireToReport, bool partTwo)
 
     foreach (string s in input) { unresolved.Add(s); }
 
-    if (partTwo) {
+    if (partTwo)
+    {
         resolved.Add("b", 16076);
         unresolved.Remove("19138 -> b");
     }
@@ -283,15 +284,15 @@ ushort Day7(string wireToReport, bool partTwo)
             ushort? opr1Value = null;
             // if oppr1Name is a number, then it's a literal.
             // if oppr1Name is a string, then it's a wire. If resolved doesn't contain that wire, then value should be null.
-            if (ushort.TryParse(opr1Name, out _)) 
+            if (ushort.TryParse(opr1Name, out _))
             {
                 // it's a literal.
                 opr1Value = ushort.Parse(opr1Name);
-            } 
-            else 
+            }
+            else
             {
                 // it's a wire.
-                if (resolved.ContainsKey(opr1Name)) 
+                if (resolved.ContainsKey(opr1Name))
                 {
                     opr1Value = resolved[opr1Name];
                 }
@@ -301,15 +302,15 @@ ushort Day7(string wireToReport, bool partTwo)
             ushort? opr2Value = null;
             // if oppr1Name is a number, then it's a literal.
             // if oppr1Name is a string, then it's a wire. If resolved doesn't contain that wire, then value should be null.
-            if (ushort.TryParse(opr2Name, out _)) 
+            if (ushort.TryParse(opr2Name, out _))
             {
                 // it's a literal.
                 opr2Value = ushort.Parse(opr2Name);
-            } 
-            else 
+            }
+            else
             {
                 // it's a wire.
-                if (resolved.ContainsKey(opr2Name)) 
+                if (resolved.ContainsKey(opr2Name))
                 {
                     opr2Value = resolved[opr2Name];
                 }
@@ -318,7 +319,7 @@ ushort Day7(string wireToReport, bool partTwo)
             string dst = m.Groups["dst"].Value;
             string instruction = m.Groups["instr"].Value;
 
-            switch (instruction) 
+            switch (instruction)
             {
                 case "" when opr2Value.HasValue:
                     // It's a literalToWire, or wireToWire
@@ -328,7 +329,7 @@ ushort Day7(string wireToReport, bool partTwo)
                 case "AND" when opr1Value.HasValue && opr2Value.HasValue:
                     resolved.Add(dst, (ushort)(opr1Value.Value & opr2Value.Value));
                     unresolved.Remove(s);
-                    break;       
+                    break;
                 case "OR" when opr1Value.HasValue && opr2Value.HasValue:
                     resolved.Add(dst, (ushort)(opr1Value.Value | opr2Value.Value));
                     unresolved.Remove(s);
@@ -352,6 +353,25 @@ ushort Day7(string wireToReport, bool partTwo)
     } while (unresolved.Count > 0);
 
     return resolved[wireToReport];
+}
+
+(ushort part1, ushort Part2) Day8()
+{
+    List<string> input = File.ReadLines("./Assets/day8.txt").ToList<string>();
+
+    ushort codeCharacterCount = 0;
+    ushort unescapedCharacterCount = 0;
+    ushort extraEscapedCharacterCount = 0;
+
+    foreach (string s in input)
+    {
+        codeCharacterCount += (ushort)s.Length;
+        unescapedCharacterCount += (ushort)((new Regex("\\\\x[0-9a-f]{2}").Replace(s[1..^1], " ").Replace("\\\"", "a").Replace("\\\\", "b")).Length);
+        Regex r = new Regex("\\\"|\\\\");
+        extraEscapedCharacterCount += (ushort)(s.Length + r.Matches(s).Count() + 2);
+    }
+
+    return ((ushort)(codeCharacterCount - unescapedCharacterCount), (ushort)(extraEscapedCharacterCount - codeCharacterCount));
 }
 
 #if !SKIP
@@ -384,3 +404,7 @@ Console.WriteLine($"  Part 2 - Lights brightness: {lightBrightness}");
 Console.WriteLine("Day 7");
 Console.WriteLine($"  Part 1 - Signal on wire \"a\": {wireSignal1}");
 Console.WriteLine($"  Part 2 - Signal on wire \"a\" after overriding \"b\" with {wireSignal1}: {wireSignal2}");
+(ushort unescapedCharacterDelta, ushort ultraEscapedCharactedDelta) = Day8();
+Console.WriteLine("Day 8");
+Console.WriteLine($"  Part 1 - Unescaped character count delta: {unescapedCharacterDelta}");
+Console.WriteLine($"  Part 1 - Unescaped character count delta: {ultraEscapedCharactedDelta}");
