@@ -253,7 +253,7 @@ using System.Text.RegularExpressions;
 
 }
 
-#endif
+
 
 ushort Day7(string wireToReport, bool partTwo)
 {
@@ -374,6 +374,45 @@ ushort Day7(string wireToReport, bool partTwo)
     return ((ushort)(codeCharacterCount - unescapedCharacterCount), (ushort)(extraEscapedCharacterCount - codeCharacterCount));
 }
 
+#endif
+
+(ushort minimum, ushort maximum) Day9()
+{
+    
+    List<string> cities = new ();
+    var cityDistances = new Dictionary<(string first, string second), ushort>();
+
+    // Parse the obnoxious file.
+    List<string> input = File.ReadLines("./Assets/day9.txt").ToList<string>();
+    foreach (string s in input) 
+    {
+        Match mc = new Regex("^(?<first>\\w*) to (?<second>\\w*) = (?<distance>\\d*)$").Match(s);
+        if (!cities.Any(f=> f == mc.Groups["first"].Value)) { cities.Add(mc.Groups["first"].Value);}
+        if (!cities.Any(f=> f == mc.Groups["second"].Value)) { cities.Add(mc.Groups["second"].Value);}
+        cityDistances.Add((mc.Groups["first"].Value, mc.Groups["second"].Value), ushort.Parse(mc.Groups["distance"].Value));
+    }
+
+    var cityPermutations = cities.Permutate<string>();
+
+    ushort minimumDistance = ushort.MaxValue;
+    ushort maximumDisance = ushort.MinValue;
+
+    foreach (var cp in cityPermutations) 
+    {
+        ushort workingDistance = 0;
+        for (int i=1; i < cp.Count(); i++) 
+        {
+            workingDistance += cityDistances.Single(f => (f.Key.first == cp[i] || f.Key.second == cp[i]) 
+                                                    && (f.Key.first == cp[i-1] || f.Key.second == cp[i-1])
+                                                    ).Value;
+        }
+        if (workingDistance > maximumDisance) {maximumDisance = workingDistance;}
+        if (workingDistance < minimumDistance) {minimumDistance = workingDistance;}
+    }
+
+    return (minimumDistance, maximumDisance);
+}
+
 #if !SKIP
 (long floor, ulong firstBasement) = Day1();
 Console.WriteLine("Day 1");
@@ -399,7 +438,6 @@ Console.WriteLine($"  Part 2 - Number of nice strings (method 2): {niceStrings2}
 Console.WriteLine("Day 6");
 Console.WriteLine($"  Part 1 - Lights on: {lightsOn}");
 Console.WriteLine($"  Part 2 - Lights brightness: {lightBrightness}");
-#endif
 (ushort wireSignal1, ushort wireSignal2) = (Day7("a", false), Day7("a", true));
 Console.WriteLine("Day 7");
 Console.WriteLine($"  Part 1 - Signal on wire \"a\": {wireSignal1}");
@@ -407,4 +445,9 @@ Console.WriteLine($"  Part 2 - Signal on wire \"a\" after overriding \"b\" with 
 (ushort unescapedCharacterDelta, ushort ultraEscapedCharactedDelta) = Day8();
 Console.WriteLine("Day 8");
 Console.WriteLine($"  Part 1 - Unescaped character count delta: {unescapedCharacterDelta}");
-Console.WriteLine($"  Part 1 - Unescaped character count delta: {ultraEscapedCharactedDelta}");
+Console.WriteLine($"  Part 2 - Ultra Escaped character count delta: {ultraEscapedCharactedDelta}");
+#endif
+(ushort minimumDistance, ushort maximumDisance) = Day9();
+Console.WriteLine("Day 9");
+Console.WriteLine($"  Part 1 - Minimum Distance: {minimumDistance}");
+Console.WriteLine($"  Part 2 - Maximum Distance: {maximumDisance}");
