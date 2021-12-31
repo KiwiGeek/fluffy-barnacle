@@ -413,6 +413,60 @@ ushort Day7(string wireToReport, bool partTwo)
     return (minimumDistance, maximumDisance);
 }
 
+(uint fortyIterations, uint fiftyIterations) Day10() 
+{
+
+    string lookAndSay(string input) 
+    {
+        Stack<(char value, uint repetitions)> tempStack = new();
+
+        foreach (char c in input) 
+        {
+            if (tempStack.Any() && tempStack.First().value == c) 
+            {
+                var temp = tempStack.Pop();
+                temp.repetitions++;
+                tempStack.Push(temp);
+            }
+            else
+            {
+                tempStack.Push((c, 1));
+            }
+        }
+
+        string result = string.Empty;
+
+        while (tempStack.Any()) 
+        {
+            (char value, uint repetitions) = tempStack.Pop();
+            result = $"{repetitions}{value}{result}";
+        }
+
+        return result;
+
+    }
+    
+    List<string> input = File.ReadLines("./Assets/day10.txt").ToList<string>();
+    string working = input[0];
+    ushort iterations = ushort.Parse(input[1]);
+
+    for(ushort i = 0; i < iterations; i++) 
+    {
+        Console.WriteLine(i);
+        working = lookAndSay(working);
+    }
+
+    string working2 = working;
+    ushort iterations2 = ushort.Parse(input[2]);
+    for (ushort i = iterations; i < iterations2; i++) 
+    {
+        Console.WriteLine(i);
+        working2 = lookAndSay(working2);
+    }
+
+    return ((uint)working.Length,(uint)working2.Length);
+}
+
 #if !SKIP
 (long floor, ulong firstBasement) = Day1();
 Console.WriteLine("Day 1");
@@ -451,3 +505,7 @@ Console.WriteLine($"  Part 2 - Ultra Escaped character count delta: {ultraEscape
 Console.WriteLine("Day 9");
 Console.WriteLine($"  Part 1 - Minimum Distance: {minimumDistance}");
 Console.WriteLine($"  Part 2 - Maximum Distance: {maximumDisance}");
+(uint fortyIterations, uint fiftyIterations) = Day10();
+Console.WriteLine("Day 10");
+Console.WriteLine($"  Part 1 - length after 40 iterations: {fortyIterations}");
+Console.WriteLine($"  Part 2 - length after 50 iterations: {fiftyIterations}");
