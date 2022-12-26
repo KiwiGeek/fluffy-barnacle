@@ -70,7 +70,6 @@ internal class Day12 : IDay
     private long SumNonRedNumbers(string inputFile)
     {
         string input = File.ReadAllText(inputFile);
-        // input = @"[{""d"":""red"",""e"":[1,2,3,4],""f"":5}]";
         JArray root = JArray.Parse(input);
         return SumNumbers(root);
     }
