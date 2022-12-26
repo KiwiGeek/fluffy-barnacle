@@ -2,7 +2,7 @@
 
 public class AdventOfCode
 {
-    static uint startAt = 12;
+    static uint startAt = 1;
 
     static void Main(string[] args)
     {
