@@ -8,7 +8,7 @@ internal class Day14 : IDay
 
     public string PartOne => WinningDistance.ToString();
     public string PartTwo => WinningScore.ToString();
-    public string PartOneDescription => "Distance has the winning reindeer traveled";
+    public string PartOneDescription => "Distance the winning reindeer traveled";
     public string PartTwoDescription => "Points the winning reindeer has";
 
     private uint _secondsRemainingToProcess;
