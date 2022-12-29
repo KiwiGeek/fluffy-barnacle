@@ -2,7 +2,7 @@
 
 public class AdventOfCode
 {
-    static uint _startAt = 17;
+    static uint _startAt = 18;
 
     static void Main(string[] args)
     {
@@ -17,7 +17,7 @@ public class AdventOfCode
                                               typeof(Day05), typeof(Day06), typeof(Day07), typeof(Day08),
                                               typeof(Day09), typeof(Day10), typeof(Day11), typeof(Day12),
                                               typeof(Day13), typeof(Day14), typeof(Day15), typeof(Day16),
-                                              typeof(Day17)
+                                              typeof(Day17), typeof(Day18)
                                           })
         {
             ProcessDay(d);
