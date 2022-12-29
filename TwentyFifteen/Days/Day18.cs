@@ -1,4 +1,6 @@
-﻿namespace TwentyFifteen;
+﻿using System.Runtime.CompilerServices;
+
+namespace TwentyFifteen;
 
 internal class Day18 : IDay
 {
@@ -54,6 +56,19 @@ internal class Day18 : IDay
                                                         (y < _height - 1 && x > 0 ? GetValueOfCell(y + 1, x - 1) : 0U) +
                                                         (y < _height - 1 ? GetValueOfCell(y + 1, x) : 0U) +
                                                         (y < _height - 1 && x < _width - 1 ? GetValueOfCell(y + 1, x + 1) : 0U);
+
+    private void PrintFrontBuffer()
+    {
+        for (uint y = 0; y < _height; y++)
+        {
+            for (uint x = 0; x < _width; x++)
+            {
+                Console.Write(FrontBuffer[y, x] ? "#" : ".");
+            }
+
+            Console.WriteLine();
+        }
+    }
 
     private void Iterate()
     {
