@@ -13,8 +13,8 @@ internal class Day14 : IDay
 
     private uint _secondsRemainingToProcess;
 
-    public uint WinningDistance { get; private set; }
-    public uint WinningScore { get; private set; }
+    private uint WinningDistance { get; set; }
+    private uint WinningScore { get; set; }
 
     private readonly Dictionary<string, (uint FlySpeed, uint FlyTime, uint RestTime)> _reindeer = new();
 

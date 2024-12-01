@@ -2,8 +2,8 @@ namespace TwentyFifteen;
 
 internal class Day01 : IDay
 {
-    public long Floor { get; set; }
-    public ulong FirstBasementIndex { get; set; }
+    private long Floor { get; set; }
+    private ulong FirstBasementIndex { get; set; }
 
     public string PartOne => Floor.ToString();
 
@@ -15,15 +15,15 @@ internal class Day01 : IDay
 
     public uint Index => 1;
 
-    private string? input;
+    private string? _input;
 
     public void Process(string inputFile)
     {
-        input = File.ReadAllText(inputFile);
-        System.Diagnostics.Debug.Assert(input != null);
+        _input = File.ReadAllText(inputFile);
+        System.Diagnostics.Debug.Assert(_input != null);
 
         ulong index = 0;
-        foreach (char c in input)
+        foreach (char c in _input)
         {
             index++;
             Floor += c == '(' ? 1 : -1;

@@ -12,8 +12,8 @@ internal class Day06 : IDay
 
     public string PartTwoDescription => "Lights brightness";
 
-    public ulong LightsOn {get;set;}
-    public ulong LightBrightness {get;set;}
+    private ulong LightsOn {get;set;}
+    private ulong LightBrightness {get;set;}
 
     public void Process(string inputFile)
     {
@@ -21,44 +21,7 @@ internal class Day06 : IDay
             bool[,] lights = new bool[1000, 1000];
             uint[,] lightBrightness = new uint[1000, 1000];
 
-            void setBlock(uint x1, uint y1, uint x2, uint y2, string instruction)
-            {
-
-                void setRow(uint x1, uint x2, uint y, string instruction)
-                {
-
-                    void setLight(uint x, uint y, string instruction)
-                    {
-                        if (instruction == "turn on")
-                        {
-                            lights[x, y] = true;
-                            lightBrightness[x, y]++;
-                        }
-                        if (instruction == "turn off")
-                        {
-                            lights[x, y] = false;
-                            if (lightBrightness[x, y] > 0) { lightBrightness[x, y]--; }
-                        }
-                        if (instruction == "toggle")
-                        {
-                            lights[x, y] = !lights[x, y];
-                            lightBrightness[x, y] += 2;
-                        }
-                    }
-
-                    for (uint i = x1; i <= x2; i++)
-                    {
-                        setLight(i, y, instruction);
-                    }
-                }
-
-                for (uint i = y1; i <= y2; i++)
-                {
-                    setRow(x1, x2, i, instruction);
-                }
-            }
-
-            List<string> input = File.ReadLines(inputFile).ToList<string>();
+            List<string> input = File.ReadLines(inputFile).ToList();
 
             foreach (string s in input)
             {
@@ -71,23 +34,63 @@ internal class Day06 : IDay
                 uint y1 = uint.Parse(match.Groups["y1"].Value);
                 uint y2 = uint.Parse(match.Groups["y2"].Value);
 
-                setBlock(x1, y1, x2, y2, instr);
+                SetBlock(x1, y1, x2, y2, instr);
             }
 
             // count lights on
-            ulong totallightsOn = 0;
+            ulong totalLightsOn = 0;
             ulong totalBrightness = 0;
 
             for (int y = 0; y <= 999; y++)
             {
                 for (int x = 0; x <= 999; x++)
                 {
-                    if (lights[x, y]) totallightsOn++;
+                    if (lights[x, y]) totalLightsOn++;
                     totalBrightness += lightBrightness[x, y];
                 }
             }
 
-            LightsOn = totallightsOn;
+            LightsOn = totalLightsOn;
             LightBrightness = totalBrightness;
+            return;
+
+            void SetBlock(uint x1, uint y1, uint x2, uint y2, string instruction)
+            {
+                for (uint i = y1; i <= y2; i++)
+                {
+                    SetRow(x1, x2, i, instruction);
+                }
+
+                return;
+
+                void SetRow(uint setRowX1, uint setRowX2, uint setRowY, string setRowInstruction)
+                {
+                    for (uint i = setRowX1; i <= setRowX2; i++)
+                    {
+                        SetLight(i, setRowY, setRowInstruction);
+                    }
+
+                    return;
+
+                    void SetLight(uint setLightX, uint setLightY, string setLightInstruction)
+                    {
+                        if (setLightInstruction == "turn on")
+                        {
+                            lights[setLightX, setLightY] = true;
+                            lightBrightness[setLightX, setLightY]++;
+                        }
+                        if (setLightInstruction == "turn off")
+                        {
+                            lights[setLightX, setLightY] = false;
+                            if (lightBrightness[setLightX, setLightY] > 0) { lightBrightness[setLightX, setLightY]--; }
+                        }
+                        if (setLightInstruction == "toggle")
+                        {
+                            lights[setLightX, setLightY] = !lights[setLightX, setLightY];
+                            lightBrightness[setLightX, setLightY] += 2;
+                        }
+                    }
+                }
+            }
     }
 }

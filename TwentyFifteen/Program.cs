@@ -1,10 +1,10 @@
 ﻿namespace TwentyFifteen;
 
-public class AdventOfCode
+public static class AdventOfCode
 {
-    static uint _startAt = 18;
+    private static uint _startAt = uint.MinValue;
 
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
 
         // Try to interpret any incoming parameters at a skip command,
@@ -25,7 +25,7 @@ public class AdventOfCode
 
     }
 
-    internal static void ProcessDay(Type dayType) 
+    private static void ProcessDay(Type dayType) 
     {
         // Arrange
         if (!dayType.GetInterfaces().Contains(typeof(IDay))) throw new InvalidOperationException();

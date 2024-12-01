@@ -9,8 +9,8 @@ internal class Day16 : IDay
     public string PartTwo => FuzzyAuntSue.ToString();
     public string PartOneDescription => "Aunt sue who gave the gift";
     public string PartTwoDescription => "Fuzzy Aunt sue who gave the gift";
-    public uint AuntSue { get; private set; }
-    public uint FuzzyAuntSue { get; private set; }
+    private uint AuntSue { get; set; }
+    private uint FuzzyAuntSue { get; set; }
 
     private record AuntSueFact
     {

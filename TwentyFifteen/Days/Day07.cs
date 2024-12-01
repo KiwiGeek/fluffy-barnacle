@@ -6,8 +6,8 @@ internal class Day07 : IDay
 {
     public uint Index => 7;
 
-    public ushort Signal1 { get; set; }
-    public ushort Signal2 { get; set; }
+    private ushort Signal1 { get; set; }
+    private ushort Signal2 { get; set; }
 
     public string PartOne => Signal1.ToString();
 
@@ -17,24 +17,24 @@ internal class Day07 : IDay
 
     public string PartTwoDescription => $"Signal on wire \"a\" after overriding \"b\" with {PartOne}";
 
-    Dictionary<string, ushort> resolved = new();
-    List<string> unresolved = new();
+    private readonly Dictionary<string, ushort> _resolved = [];
+    private readonly List<string> _unresolved = [];
 
-    private string inputFile = string.Empty;
+    private string _inputFile = string.Empty;
 
-    private void ResetIEnumerables()
+    private void ResetEnumerables()
     {
-        List<string> input = File.ReadLines(inputFile).ToList<string>();
-        unresolved.Clear();
-        foreach (string s in input) { unresolved.Add(s); }
-        resolved.Clear();
+        List<string> input = File.ReadLines(_inputFile).ToList();
+        _unresolved.Clear();
+        foreach (string s in input) { _unresolved.Add(s); }
+        _resolved.Clear();
     }
 
-    internal ushort ProcessWiring()
+    private ushort ProcessWiring()
     {
         do
         {
-            foreach (string s in unresolved.ToList())
+            foreach (string s in _unresolved.ToList())
             {
                 // parse the current instruction.
                 Regex instructionDecoder = new("^(?:(?<opr_1>.*?) *(?<instr>AND|OR|RSHIFT|NOT|LSHIFT) )?(?<opr_2>.*?) -> (?<dst>.*?)$");
@@ -53,9 +53,9 @@ internal class Day07 : IDay
                 else
                 {
                     // it's a wire.
-                    if (resolved.ContainsKey(opr1Name))
+                    if (_resolved.TryGetValue(opr1Name, out ushort value))
                     {
-                        opr1Value = resolved[opr1Name];
+                        opr1Value = value;
                     }
                 }
 
@@ -71,9 +71,9 @@ internal class Day07 : IDay
                 else
                 {
                     // it's a wire.
-                    if (resolved.ContainsKey(opr2Name))
+                    if (_resolved.TryGetValue(opr2Name, out ushort value))
                     {
-                        opr2Value = resolved[opr2Name];
+                        opr2Value = value;
                     }
                 }
 
@@ -84,47 +84,47 @@ internal class Day07 : IDay
                 {
                     case "" when opr2Value.HasValue:
                         // It's a literalToWire, or wireToWire
-                        resolved.Add(dst, opr2Value.Value);
-                        unresolved.Remove(s);
+                        _resolved.Add(dst, opr2Value.Value);
+                        _unresolved.Remove(s);
                         break;
                     case "AND" when opr1Value.HasValue && opr2Value.HasValue:
-                        resolved.Add(dst, (ushort)(opr1Value.Value & opr2Value.Value));
-                        unresolved.Remove(s);
+                        _resolved.Add(dst, (ushort)(opr1Value.Value & opr2Value.Value));
+                        _unresolved.Remove(s);
                         break;
                     case "OR" when opr1Value.HasValue && opr2Value.HasValue:
-                        resolved.Add(dst, (ushort)(opr1Value.Value | opr2Value.Value));
-                        unresolved.Remove(s);
+                        _resolved.Add(dst, (ushort)(opr1Value.Value | opr2Value.Value));
+                        _unresolved.Remove(s);
                         break;
                     case "LSHIFT" when opr1Value.HasValue && opr2Value.HasValue:
-                        resolved.Add(dst, (ushort)(opr1Value.Value << opr2Value.Value));
-                        unresolved.Remove(s);
+                        _resolved.Add(dst, (ushort)(opr1Value.Value << opr2Value.Value));
+                        _unresolved.Remove(s);
                         break;
                     case "RSHIFT" when opr1Value.HasValue && opr2Value.HasValue:
-                        resolved.Add(dst, (ushort)(opr1Value.Value >> opr2Value.Value));
-                        unresolved.Remove(s);
+                        _resolved.Add(dst, (ushort)(opr1Value.Value >> opr2Value.Value));
+                        _unresolved.Remove(s);
                         break;
                     case "NOT" when opr2Value.HasValue:
-                        resolved.Add(dst, (ushort)(~opr2Value.Value));
-                        unresolved.Remove(s);
+                        _resolved.Add(dst, (ushort)(~opr2Value.Value));
+                        _unresolved.Remove(s);
                         break;
                 }
 
             }
 
-        } while (unresolved.Count > 0);
+        } while (_unresolved.Count > 0);
 
-        return resolved["a"];
+        return _resolved["a"];
     }
 
     public void Process(string input)
     {
-        inputFile = input;
-        ResetIEnumerables();
+        _inputFile = input;
+        ResetEnumerables();
         Signal1 = ProcessWiring();
 
-        ResetIEnumerables();
-        resolved.Add("b", Signal1);
-        unresolved.RemoveAll(f=> f.EndsWith(" -> b"));
+        ResetEnumerables();
+        _resolved.Add("b", Signal1);
+        _unresolved.RemoveAll(f=> f.EndsWith(" -> b"));
         Signal2 = ProcessWiring();
     }
 }

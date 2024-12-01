@@ -15,9 +15,9 @@ internal class Day12 : IDay
 
     public string PartTwoDescription => "Sum of all numbers ignoring reds";
 
-    public int SumOfAllNumbers { get; private set; }
+    private int SumOfAllNumbers { get; set; }
 
-    public long SumOfAllNumbersIgnoringRed { get; private set; }
+    private long SumOfAllNumbersIgnoringRed { get; set; }
 
     private List<int> AllNumbersInString(string input)
     {

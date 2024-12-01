@@ -2,8 +2,8 @@ namespace TwentyFifteen;
 
 internal class Day02 : IDay
 {
-    public ulong TotalPaper { get; set; }
-    public ulong TotalRibbon { get; set; }
+    private ulong TotalPaper { get; set; }
+    private ulong TotalRibbon { get; set; }
 
     public uint Index => 2;
 
@@ -15,13 +15,13 @@ internal class Day02 : IDay
 
     public string PartTwoDescription => "Feet of Ribbon";
 
-    private List<string>? input;
+    private List<string>? _input;
 
     public void Process(string inputFile)
     {
-        input = File.ReadLines(inputFile).ToList<string>();
+        _input = File.ReadLines(inputFile).ToList();
 
-        foreach (string s in input)
+        foreach (string s in _input)
         {
             ushort depth = ushort.Parse(s.Split('x')[0]);
             ushort width = ushort.Parse(s.Split('x')[1]);
@@ -32,10 +32,10 @@ internal class Day02 : IDay
             ushort sidePerimeter = (ushort)(depth * 2 + height * 2);
             ushort frontPerimeter = (ushort)(width * 2 + height * 2);
             ushort topPerimeter = (ushort)(width * 2 + depth * 2);
-            ushort smallestface = side;
-            if (front < smallestface) { smallestface = front; }
-            if (top < smallestface) { smallestface = top; }
-            ushort paper = (ushort)(side * 2 + front * 2 + top * 2 + smallestface);
+            ushort smallestFace = side;
+            if (front < smallestFace) { smallestFace = front; }
+            if (top < smallestFace) { smallestFace = top; }
+            ushort paper = (ushort)(side * 2 + front * 2 + top * 2 + smallestFace);
             TotalPaper += paper;
             ushort shortestPerimeter = sidePerimeter;
             if (frontPerimeter < shortestPerimeter) { shortestPerimeter = frontPerimeter; }

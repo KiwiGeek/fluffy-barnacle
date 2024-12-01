@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TwentyFifteen;
+﻿namespace TwentyFifteen;
 
 internal class Day17 : IDay
 {
@@ -9,9 +7,9 @@ internal class Day17 : IDay
     public string PartTwo => CombinationsOfMinimumContainers.ToString();
     public string PartOneDescription => "Combinations of containers";
     public string PartTwoDescription => "Number of combinations of minimum containers";
-    public uint CombinationsOfContainers { get; private set; }
+    private uint CombinationsOfContainers { get; set; }
     private uint _minimumContainersRequired = uint.MaxValue;
-    public uint CombinationsOfMinimumContainers { get; private set; } = uint.MaxValue;
+    private uint CombinationsOfMinimumContainers { get; set; } = uint.MaxValue;
 
     private uint FindCombinations(List<uint> sortedContainers, uint target, string pathSoFar)
     {
@@ -21,7 +19,7 @@ internal class Day17 : IDay
 
         // we're now in one of three scenarios:
         // 1) The sum of the remaining entries is exactly the target. So return 1.
-        // 2) the sum of the remaining entries is less than the target. So retrun 0, we can't get there from here.
+        // 2) the sum of the remaining entries is less than the target. So return 0, we can't get there from here.
         // 3) The sum of the remaining entries is more than the target, so return the sum of:
         //      a) this method called again, with the first item removed, and the same target, and
         //      b) this method called again, with the first item removed, and a target = current-target minus the removed first item.

@@ -9,18 +9,11 @@ internal class Day13 : IDay
     public string PartTwo => TotalOptimalChangeInHappinessWithMe.ToString();
     public string PartOneDescription => "Total change in happiness for the optimal seating";
     public string PartTwoDescription => "Total change in happiness for the optimal seating including me";
-    public int TotalOptimalChangeInHappiness { get; private set; } = Int32.MinValue;
-    public int TotalOptimalChangeInHappinessWithMe { get; private set; } = Int32.MinValue;
-
-    private class PersonHappiness
-    {
-        public string Person { get; set; }
-        public string Neighbour { get; set; }
-        public int Change { get; set; }
-    }
-
-    private Dictionary<(string Person, string Neighbor), int> peopleHappinesses = new();
-    private List<string> people = new();
+    private int TotalOptimalChangeInHappiness { get; set; } = int.MinValue;
+    private int TotalOptimalChangeInHappinessWithMe { get; set; } = int.MinValue;
+    
+    private readonly Dictionary<(string Person, string Neighbor), int> _peopleHappinesses = new();
+    private readonly List<string> _people = [];
 
     private int OptimizePermutations(IEnumerable<string[]> peoplePermutations)
     {
@@ -33,10 +26,10 @@ internal class Day13 : IDay
             {
                 int rightNeighbor = i + 1 > combos.Length - 1 ? 0 : i + 1;
                 int leftNeighbor = i - 1 < 0 ? combos.Length - 1 : i - 1;
-                happiness += peopleHappinesses
+                happiness += _peopleHappinesses
                                  .Single(f => (f.Key.Person == combos[i] && f.Key.Neighbor == combos[rightNeighbor]))
                                  .Value +
-                             peopleHappinesses.Single(f =>
+                             _peopleHappinesses.Single(f =>
                                  (f.Key.Person == combos[i] && f.Key.Neighbor == combos[leftNeighbor])).Value;
             }
 
@@ -56,22 +49,22 @@ internal class Day13 : IDay
         foreach (string s in File.ReadLines(inputFile).ToList())
         {
             GroupCollection g = decoderRegex.Match(s).Groups;
-            peopleHappinesses.Add((g["person"].Value, g["neighbor"].Value), (g["direction"].Value == "lose" ? -1 : 1) * int.Parse(g["delta"].ToString()));
-            if (!people.Contains(g["person"].Value)) { people.Add(g["person"].Value); }
+            _peopleHappinesses.Add((g["person"].Value, g["neighbor"].Value), (g["direction"].Value == "lose" ? -1 : 1) * int.Parse(g["delta"].ToString()));
+            if (!_people.Contains(g["person"].Value)) { _people.Add(g["person"].Value); }
         }
 
-        IEnumerable<string[]> peoplePermutations = people.Permutate<string>();
+        IEnumerable<string[]> peoplePermutations = _people.Permutate();
         TotalOptimalChangeInHappiness = OptimizePermutations(peoplePermutations);
 
         // Add myself as an option next to everyone, and everyone think I'm meh
-        foreach (string p in people)
+        foreach (string p in _people)
         {
-            peopleHappinesses.Add(new ("me", p), 0);
-            peopleHappinesses.Add(new (p, "me"), 0);
+            _peopleHappinesses.Add(new ("me", p), 0);
+            _peopleHappinesses.Add(new (p, "me"), 0);
         }
-        people.Add("me");
+        _people.Add("me");
 
-        peoplePermutations = people.Permutate<string>();
+        peoplePermutations = _people.Permutate();
         TotalOptimalChangeInHappinessWithMe = OptimizePermutations(peoplePermutations);
 
     }

@@ -16,12 +16,12 @@ internal class Day08 : IDay
 
     public string PartTwoDescription => "Ultra Escaped character count delta";
 
-    public ushort UnescapedCharacterDelta { get; private set; }
-    public ushort UltraEscapedCharacterDelta { get; private set; }
+    private ushort UnescapedCharacterDelta { get; set; }
+    private ushort UltraEscapedCharacterDelta { get; set; }
 
     public void Process(string inputFile)
     {
-        List<string> input = File.ReadLines(inputFile).ToList<string>();
+        List<string> input = File.ReadLines(inputFile).ToList();
 
         ushort codeCharacterCount = 0;
         ushort unescapedCharacterCount = 0;
@@ -31,7 +31,7 @@ internal class Day08 : IDay
         {
             codeCharacterCount += (ushort)s.Length;
             unescapedCharacterCount += (ushort)((new Regex("\\\\x[0-9a-f]{2}").Replace(s[1..^1], " ").Replace("\\\"", "a").Replace("\\\\", "b")).Length);
-            Regex r = new Regex("\\\"|\\\\");
+            Regex r = new ("\\\"|\\\\");
             extraEscapedCharacterCount += (ushort)(s.Length + r.Matches(s).Count() + 2);
         }
 

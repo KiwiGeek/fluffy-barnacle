@@ -14,21 +14,20 @@ public class Day10 : IDay
 
     public string PartTwoDescription => "Length after 50 iterations";
 
-    public uint FortyIterations { get; private set; }
-    public uint FiftyIterations { get; private set; }
+    private uint FortyIterations { get; set; }
+    private uint FiftyIterations { get; set; }
 
     string LookAndSay(string input)
     {
         ReadOnlySpan<char> characters = input.AsSpan();
 
         uint iterator = uint.MinValue;
-        char? currentCharacter = null;
         StringBuilder sb = new();
 
         while (iterator < characters.Length)
         {
             // read the character at the iterator
-            currentCharacter = characters[(int)iterator];
+            char? currentCharacter = characters[(int)iterator];
             uint currentLength = 1;
 
             // now, keep reading subsequent characters until either we run out
@@ -46,7 +45,7 @@ public class Day10 : IDay
 
     public void Process(string inputFile)
     {
-        List<string> input = File.ReadLines(inputFile).ToList<string>();
+        List<string> input = File.ReadLines(inputFile).ToList();
         string working = input[0];
         ushort iterations = ushort.Parse(input[1]);
 

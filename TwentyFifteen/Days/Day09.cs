@@ -10,8 +10,8 @@ public class Day09 : IDay
 
     public string PartTwo => MaximumDistance.ToString();
 
-    public ushort MinimumDistance { get; private set; } = ushort.MaxValue;
-    public ushort MaximumDistance { get; private set; } = ushort.MinValue;
+    private ushort MinimumDistance { get; set; } = ushort.MaxValue;
+    private ushort MaximumDistance { get; set; } = ushort.MinValue;
 
     public string PartOneDescription => "Minimum Distance";
 
@@ -23,16 +23,15 @@ public class Day09 : IDay
         var cityDistances = new Dictionary<(string first, string second), ushort>();
 
         // Parse the obnoxious file.
-        List<string> input = File.ReadLines(inputFile).ToList<string>();
-        foreach (string s in input)
+        List<string> input = File.ReadLines(inputFile).ToList();
+        foreach (Match mc in input.Select(s => new Regex("^(?<first>\\w*) to (?<second>\\w*) = (?<distance>\\d*)$").Match(s)))
         {
-            Match mc = new Regex("^(?<first>\\w*) to (?<second>\\w*) = (?<distance>\\d*)$").Match(s);
-            if (!cities.Any(f => f == mc.Groups["first"].Value)) { cities.Add(mc.Groups["first"].Value); }
-            if (!cities.Any(f => f == mc.Groups["second"].Value)) { cities.Add(mc.Groups["second"].Value); }
+            if (cities.All(f => f != mc.Groups["first"].Value)) { cities.Add(mc.Groups["first"].Value); }
+            if (cities.All(f => f != mc.Groups["second"].Value)) { cities.Add(mc.Groups["second"].Value); }
             cityDistances.Add((mc.Groups["first"].Value, mc.Groups["second"].Value), ushort.Parse(mc.Groups["distance"].Value));
         }
 
-        var cityPermutations = cities.Permutate<string>();
+        var cityPermutations = cities.Permutate();
 
         foreach (var cp in cityPermutations)
         {

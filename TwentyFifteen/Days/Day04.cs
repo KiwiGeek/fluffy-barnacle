@@ -11,22 +11,22 @@ internal class Day04 : IDay
 
     public string PartTwo => Hash6.ToString();
 
-    public uint Hash5 { get; set; }
-    public uint Hash6 { get; set; }
+    private uint Hash5 { get; set; }
+    private uint Hash6 { get; set; }
 
     public string PartOneDescription => "Lowest 5 Character hash";
 
     public string PartTwoDescription => "Lowest 6 Character hash";
 
-    string CreateMD5Hash(string input)
+    static string CreateMD5Hash(string input)
     {
-        MD5 md5 = System.Security.Cryptography.MD5.Create();
-        byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+        MD5 md5 = MD5.Create();
+        byte[] inputBytes = Encoding.ASCII.GetBytes(input);
         byte[] hashBytes = md5.ComputeHash(inputBytes);
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < hashBytes.Length; i++)
+        foreach (byte t in hashBytes)
         {
-            sb.Append(hashBytes[i].ToString("X2"));
+            sb.Append(t.ToString("X2"));
         }
         return sb.ToString();
     }

@@ -9,8 +9,8 @@ internal class Day15 : IDay
     public string PartTwo => HighestScoringCookieOfExactly500Calories.ToString();
     public string PartOneDescription => "Score of highest-scoring cookie";
     public string PartTwoDescription => "Score of highest-scoring cookie of exactly 500 calories";
-    public long HighestScoringCookie { get; private set; } = uint.MinValue;
-    public long HighestScoringCookieOfExactly500Calories { get; private set; } = uint.MinValue;
+    private long HighestScoringCookie { get; set; } = uint.MinValue;
+    private long HighestScoringCookieOfExactly500Calories { get; set; } = uint.MinValue;
 
     private record Ingredient(int Capacity, int Durability, int Flavor, int Texture, int Calories);
 

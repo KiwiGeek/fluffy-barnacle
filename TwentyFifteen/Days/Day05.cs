@@ -5,8 +5,8 @@ internal class Day05 : IDay
     public uint Index => 5;
     public string PartOne => NiceStrings1.ToString();
     public string PartTwo => NiceStrings2.ToString();
-    public uint NiceStrings1 { get; set; }
-    public uint NiceStrings2 { get; set; }
+    private uint NiceStrings1 { get; set; }
+    private uint NiceStrings2 { get; set; }
 
     public string PartOneDescription => "Number of nice strings (method 1)";
 
@@ -46,7 +46,7 @@ internal class Day05 : IDay
 
     public void Process(string inputFile)
     {
-        List<string> input = File.ReadLines(inputFile).ToList<string>();
+        List<string> input = File.ReadLines(inputFile).ToList();
 
         foreach (string s in input)
         {

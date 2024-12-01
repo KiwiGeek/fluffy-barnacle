@@ -2,9 +2,9 @@
 
 public static class AdventOfCode
 {
-    static uint _startAt = 1;
+    private static uint _startAt = 1;
 
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         // Try to interpret any incoming parameters at a skip command,
         // overriding the startAt set above.

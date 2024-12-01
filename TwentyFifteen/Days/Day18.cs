@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace TwentyFifteen;
+﻿namespace TwentyFifteen;
 
 internal class Day18 : IDay
 {
@@ -9,8 +7,8 @@ internal class Day18 : IDay
     public string PartTwo => Phase2Lights.ToString();
     public string PartOneDescription => $"Lights are on after {_iterations} steps";
     public string PartTwoDescription => $"Lights are on after {_iterations} steps with stuck corners";
-    public uint Phase1Lights { get; private set; }
-    public uint Phase2Lights { get; private set; }
+    private uint Phase1Lights { get; set; }
+    private uint Phase2Lights { get; set; }
 
     private uint _iterations;
     private uint _width;
@@ -29,7 +27,7 @@ internal class Day18 : IDay
     }
 
 
-    public uint LightsOn
+    private uint LightsOn
     {
         get
         {
@@ -56,19 +54,6 @@ internal class Day18 : IDay
                                                         (y < _height - 1 && x > 0 ? GetValueOfCell(y + 1, x - 1) : 0U) +
                                                         (y < _height - 1 ? GetValueOfCell(y + 1, x) : 0U) +
                                                         (y < _height - 1 && x < _width - 1 ? GetValueOfCell(y + 1, x + 1) : 0U);
-
-    private void PrintFrontBuffer()
-    {
-        for (uint y = 0; y < _height; y++)
-        {
-            for (uint x = 0; x < _width; x++)
-            {
-                Console.Write(FrontBuffer[y, x] ? "#" : ".");
-            }
-
-            Console.WriteLine();
-        }
-    }
 
     private void Iterate()
     {
