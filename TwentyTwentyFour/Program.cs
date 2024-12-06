@@ -2,7 +2,7 @@
 
 public static class AdventOfCode
 {
-    private static uint _startAt = 3;
+    private static uint _startAt = 4;
 
     public static void Main(string[] args)
     {
@@ -15,7 +15,7 @@ public static class AdventOfCode
 
         foreach (Type d in new List<Type>()
                  {
-                     typeof(Day01),  typeof(Day02), typeof(Day03)
+                     typeof(Day01),  typeof(Day02), typeof(Day03), typeof(Day04)
                  })
         {
             ProcessDay(d);
